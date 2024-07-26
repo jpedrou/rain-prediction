@@ -1,0 +1,18 @@
+#no-predictions-available{
+    color: #9e9e9e;
+    font-size: 25px;
+    letter-spacing: 1.2px;
+    font-style: italic;
+}
+
+#please-fill-all-the-fields-in-the-left-and-then-click-on-predict-to-see-the-result-in-the-bottom{
+    margin-top: -10px;
+    font-size: 20px;
+    color: #858585;
+}
+
+.element-container .st-emotion-cache-ofg8u2 .e1f1d6gn4{
+    width: 150px;
+    padding: 20px;
+    border: 1px solid rgb(88, 88, 88);
+}
