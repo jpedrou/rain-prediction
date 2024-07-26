@@ -28,12 +28,71 @@ with left_col:
     col5, col6, col7, col8 = st.columns(4, gap="small")
     evap = col5.number_input(label="Evaporation", value=0.0)
     sun = col6.number_input(label="Sunshine", value=0.0)
-    windgustdir = col7.number_input(label="WindGustDir", value=0.0)
+    windgustdir = col7.selectbox(
+        label="WindGustDir",
+        options=[
+            "SSE",
+            "SE",
+            "WSW",
+            "SW",
+            "E",
+            "ENE",
+            "S",
+            "SSW",
+            "N",
+            "NN",
+            "WNW",
+            "NE",
+            "NW",
+            "ESE",
+            "NNW",
+        ],
+    )
     windgustspeed = col8.number_input(label="WindGustSpeed", value=0.0)
 
     col9, col10, col11, col12 = st.columns(4, gap="small")
-    windd9 = col9.number_input(label="WindDir9am", value=0.0)
-    windd3 = col10.number_input(label="WindDir3pm", value=0.0)
+    windd9 = col9.selectbox(
+        label="WindDir9am",
+        options=[
+            "N",
+            "ESE",
+            "SSW",
+            "SW",
+            "SSE",
+            "NW",
+            "S",
+            "NE",
+            "WSW",
+            "SE",
+            "W",
+            "NNW",
+            "E",
+            "NNE",
+            "WNW",
+            "ENE",
+        ],
+    )
+    windd3 = col10.selectbox(
+        label="WindDir3pm",
+        options=[
+            "NNE",
+            "ESE",
+            "SSE",
+            "ENE",
+            "SE",
+            "WSW",
+            "NW",
+            "SSW",
+            "W",
+            "E",
+            "N",
+            "WNW",
+            "S",
+            "SW",
+            "NE",
+            "NNW",
+        ],
+    )
     wins9 = col11.number_input(label="WindSpeed9am", value=0.0)
     wins3 = col12.number_input(label="WindSpeed3pm", value=0.0)
 
@@ -94,13 +153,16 @@ with right_col:
         new_df["Temp3pm"] = [t3]
         new_df["RainToday"] = [raintoday]
 
-        new_df_processed =  pipeline.transform(new_df)
+        new_df_processed = pipeline.transform(new_df)
 
         prediction = model.predict_proba(new_df_processed)[:, 1]
-        prediction = round(np.number(prediction), 2) * 100
+        prediction = round(prediction[0], 2) * 100
 
         if prediction > 50:
-            st.metric(label="Probability", value="87.5%", delta="High Chance (+)")
-        
+            st.metric(label="Probability", value=f"{prediction}%", delta="+ Chance of rain")
+
         else:
-            st.metric(label="Probability", value="87.5%", delta="low Chance (-)")
+            st.metric(label="Probability", value=f"{prediction}%", delta="- Chance of rain")
+
+    st.title("Model's ROC Curve / AUC Score")
+    st.image('images/roc_curve.png')
