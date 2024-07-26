@@ -156,7 +156,7 @@ with right_col:
         new_df_processed = pipeline.transform(new_df)
 
         prediction = model.predict_proba(new_df_processed)[:, 1]
-        prediction = round(prediction[0], 2) * 100
+        prediction = round(prediction[0], 3) * 100
 
         if prediction > 50:
             st.metric(label="Probability", value=f"{prediction}%", delta="+ Chance of rain")
