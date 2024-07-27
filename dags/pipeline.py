@@ -35,7 +35,7 @@ ROOT_PATH = os.getenv("ROOT_PATH")
 IMAGES_PATH = os.getenv("IMAGES_PATH")
 SAVE_DATA_PATH = os.getenv("SAVE_DATA_PATH")
 DATABASE_PATH = os.getenv("DATABASE_PATH")
-TOKEN = os.getenv("TOKEN")
+TOKEN = os.getenv("GITHUB_TOKEN")
 
 dag = DAG(
     dag_id="pipeline",
@@ -161,6 +161,7 @@ def train_model():
     repo.index.commit('New Repo Update')
 
     origin = repo.remote(name = 'origin')
+    print(TOKEN)
     if TOKEN is None:
         raise ValueError("Token not found")
     origin.set_url(f'https://{TOKEN}@github.com/jpedrou/rain-prediction.git')
