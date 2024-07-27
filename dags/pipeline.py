@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import sqlite3
 import pickle
+import git
 import os
 
 import matplotlib.pyplot as plt
@@ -57,8 +58,8 @@ def extract_csv():
 
 def preprocess_data():
 
-    df = pd.read_csv(os.path.join(SAVE_DATA_PATH, "data.csv"), index_col="index")
-    X = df.drop(["RainTomorrow"], axis=1)
+    df = pd.read_csv(os.path.join(SAVE_DATA_PATH, "data.csv"))
+    X = df.drop(["RainTomorrow", "index"], axis=1)
     y = df["RainTomorrow"]
 
     X_train, X_dev, y_train, y_dev = train_test_split(
@@ -149,6 +150,18 @@ def train_model():
 
     with open(os.path.join(ROOT_PATH, "model.pkl"), "wb") as f:
         pickle.dump(model, f)
+
+    # Update Commits
+    repo = git.Repo(ROOT_PATH)
+    changed_files = [item.a_path for item in repo.index.diff(None)]
+    untracked_files = repo.untracked_files
+
+    repo.index.add(changed_files + untracked_files)
+    repo.index.commit('New Repo Update')
+
+    origin = repo.remote(name = 'origin')
+    origin.push()
+    
 
 
 # Dags Operations
