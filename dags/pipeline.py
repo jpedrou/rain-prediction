@@ -161,7 +161,6 @@ def train_model():
     repo.index.commit('New Repo Update')
 
     origin = repo.remote(name = 'origin')
-    print(TOKEN)
     if TOKEN is None:
         raise ValueError("Token not found")
     origin.set_url(f'https://{TOKEN}@github.com/jpedrou/rain-prediction.git')
