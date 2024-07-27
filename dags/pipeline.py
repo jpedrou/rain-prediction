@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import sqlite3
 import pickle
+import os
 
 import matplotlib.pyplot as plt
 
@@ -20,21 +21,43 @@ from feature_engine.encoding import OrdinalEncoder
 from feature_engine.datetime import DatetimeFeatures
 from feature_engine.outliers import Winsorizer
 
+from airflow import DAG
+from airflow.utils.dates import days_ago
+from airflow.operators.python import PythonOperator
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DEFAULT_ARGS = {"owner": "airflow"}
+ROOT_PATH = os.getenv("ROOT_PATH")
+IMAGES_PATH = os.getenv("IMAGES_PATH")
+SAVE_DATA_PATH = os.getenv("SAVE_DATA_PATH")
+DATABASE_PATH = os.getenv("DATABASE_PATH")
+
+dag = DAG(
+    dag_id="pipeline",
+    default_args=DEFAULT_ARGS,
+    schedule_interval="@daily",
+    start_date=days_ago(2),
+    catchup=False,
+)
+
 
 def extract_csv():
 
     query = """SELECT * FROM rain_in_australia"""
-    connection = sqlite3.connect("../eda/data/database.db")
+    connection = sqlite3.connect(DATABASE_PATH)
 
     df = pd.read_sql(query, con=connection)
-    df.to_csv("sets/data.csv", index = None)
+    df.to_csv(os.path.join(SAVE_DATA_PATH, "data.csv"), index=None)
 
     connection.close()
 
 
 def preprocess_data():
 
-    df = pd.read_csv("sets/data.csv", index_col='index')
+    df = pd.read_csv(os.path.join(SAVE_DATA_PATH, "data.csv"), index_col="index")
     X = df.drop(["RainTomorrow"], axis=1)
     y = df["RainTomorrow"]
 
@@ -84,10 +107,10 @@ def preprocess_data():
     X_train_processed = preprocess.fit_transform(X_train)
     X_dev_processed = preprocess.transform(X_dev)
 
-    with open("../preprocess_pipe.pkl", "wb") as f:
+    with open(os.path.join(ROOT_PATH, "preprocess_pipe.pkl"), "wb") as f:
         pickle.dump(preprocess, f)
 
-    with open("sets/training_sets.pkl", "wb") as f:
+    with open(os.path.join(SAVE_DATA_PATH, "training_sets.pkl"), "wb") as f:
         pickle.dump(X_train_processed, f)
         pickle.dump(X_dev_processed, f)
         pickle.dump(y_train, f)
@@ -105,11 +128,11 @@ def train_model():
         plt.plot(fpr, tpr)
         plt.xlabel("False Positive Rate")
         plt.ylabel("True Positive Rate")
-        plt.legend((f'AUC Score: {auc_score}',), loc = 'best')
-        plt.savefig('../images/roc_curve.png', transparent = True)
+        plt.legend((f"AUC Score: {auc_score}",), loc="best")
+        plt.savefig(os.path.join(IMAGES_PATH, "roc_curve.png"), transparent=False)
         plt.show()
 
-    with open("sets/training_sets.pkl", "rb") as f:
+    with open(os.path.join(SAVE_DATA_PATH, "training_sets.pkl"), "rb") as f:
         X_train_processed = pickle.load(f)
         X_dev_processed = pickle.load(f)
         y_train = pickle.load(f)
@@ -122,9 +145,18 @@ def train_model():
 
     auc_score = round(roc_auc_score(y_dev, y_dev_prob), 3) * 100
 
-    plot_roc_curve(y_dev.map({'No': 0, 'Yes': 1}), y_dev_prob, auc_score)
+    plot_roc_curve(y_dev.map({"No": 0, "Yes": 1}), y_dev_prob, auc_score)
 
-    with open('../model.pkl', 'wb') as f:
+    with open(os.path.join(ROOT_PATH, "model.pkl"), "wb") as f:
         pickle.dump(model, f)
 
 
+# Dags Operations
+extract = PythonOperator(task_id="extract_csv", python_callable=extract_csv, dag=dag)
+preprocess = PythonOperator(
+    task_id="preprocess_data", python_callable=preprocess_data, dag=dag
+)
+train = PythonOperator(task_id="train_model", python_callable=train_model, dag=dag)
+
+# Queue Sequence
+extract >> preprocess >> train
