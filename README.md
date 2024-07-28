@@ -5,6 +5,12 @@
 
 Develop a system that predicts if it will rain today and tomorrow in Australia using machine learning. Additionally, implement an user interface and a queue system using Apache Airflow to continuously update the model whenever the dataset changes.
 
+## Technologies
+
+Python|Streamlit|Airflow|SQLite
+---|----|----|----|
+<img width="40" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" />|<img width="40" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/streamlit/streamlit-original.svg" />|<img width="40" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/apacheairflow/apacheairflow-original.svg" />|<img width="40" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/sqlite/sqlite-original.svg" />
+
 ## Project Components
 
 1. **Data Collection and Preparation**
@@ -31,4 +37,3 @@ Develop a system that predicts if it will rain today and tomorrow in Australia u
     - Set up Apache Airflow to automate the workflow of updating the model.
     - Create DAGs (Directed Acyclic Graphs) in Airflow to define tasks such as data ingestion, preprocessing, model training, and deployment.
     - Schedule the DAGs to run at regular intervals or when new data is available.
-    
