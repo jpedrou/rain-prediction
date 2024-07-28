@@ -163,5 +163,5 @@ with right_col:
         else:
             st.metric(label="Probability", value=f"{prediction}%", delta="- Chance of rain")
 
-    st.subheader("Model's ROC Curve / AUC Score")
+    st.markdown("Model's ROC Curve / AUC Score")
     st.image('images/roc_curve.png')
