@@ -5,7 +5,7 @@
 
 Develop a system that predicts if it will rain today and tomorrow in Australia using machine learning. Additionally, implement an user interface and a queue system using Apache Airflow to continuously update the model whenever the dataset changes.
 
-## Technologies
+**Technologies** 
 
 Python|Streamlit|Airflow|SQLite
 ---|----|----|----|
