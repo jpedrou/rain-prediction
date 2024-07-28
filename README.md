@@ -31,9 +31,3 @@ Python|Streamlit|Airflow|SQLite
     - Set up Apache Airflow to automate the workflow of updating the model.
     - Create DAGs (Directed Acyclic Graphs) in Airflow to define tasks such as data ingestion, preprocessing, model training, and deployment.
     - Schedule the DAGs to run at regular intervals or when new data is available.
-
-
-5. **Queue System with Apache Airflow**
-    - Set up Apache Airflow to automate the workflow of updating the model.
-    - Create DAGs (Directed Acyclic Graphs) in Airflow to define tasks such as data ingestion, preprocessing, model training, and deployment.
-    - Schedule the DAGs to run at regular intervals or when new data is available.
