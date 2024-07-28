@@ -115,6 +115,8 @@ with left_col:
 with right_col:
     st.title("Probability of Rain 🌧️")
     st.markdown("")
+    st.title("Model's ROC Curve / AUC Score")
+    st.image('images/roc_curve.png')
     if not button:
         st.subheader("No Predictions available")
         st.subheader(
@@ -162,6 +164,3 @@ with right_col:
 
         else:
             st.metric(label="Probability", value=f"{prediction}%", delta="- Chance of rain")
-
-    st.title("Model's ROC Curve / AUC Score")
-    st.image('images/roc_curve.png')
